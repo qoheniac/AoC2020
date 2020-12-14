@@ -1,11 +1,9 @@
 (require '[clojure.string :as string :refer [split-lines]])
 
-(defn abs [x]
-  (if (> x 0) x (- x)))
-
 (defn read-data [f]
   (map #(let [match (next (re-matches #"([A-Z])(\d+)" %))]
-          (list (first match) (Integer. (second match))))
+          {:action (first match)
+           :number (read-string (second match))})
        (split-lines (slurp f))))
 
 (defn move [loc dir vel]
@@ -17,22 +15,36 @@
 
 (defn rotate [dir angle]
   (case angle
-    90 (case dir "N" "E" "E" "S" "S" "W" "W" "N")
-    180 (case dir "N" "S" "E" "W" "S" "N" "W" "E")
-    270 (case dir "N" "W" "E" "N" "S" "E" "W" "S")))
+    90 (case dir
+         "N" "E"
+         "E" "S"
+         "S" "W"
+         "W" "N")
+    180 (case dir
+          "N" "S"
+          "E" "W"
+          "S" "N"
+          "W" "E")
+    270 (case dir
+          "N" "W"
+          "E" "N"
+          "S" "E"
+          "W" "S")))
 
 (defn exec [loc dir cmd]
-  (let [action (first cmd) number (second cmd)]
+  (let [action (:action cmd) number (:number cmd)]
     (if (= action "F")
-      (list (move loc dir number) dir)
+      {:loc (move loc dir number) :dir dir}
       (if (= action "R")
-        (list loc (rotate dir number))
+        {:loc loc :dir (rotate dir number)}
         (if (= action "L")
-          (list loc (rotate dir (- 360 number)))
-          (list (move loc action number) dir))))))
+          {:loc loc :dir (rotate dir (- 360 number))}
+          {:loc (move loc action number) :dir dir})))))
 
-(loop [loc (list 0 0) dir "E" cmds (read-data "input")]
+(loop [loc (list 0 0)
+       dir "E"
+       cmds (read-data "input")]
   (if (nil? cmds)
-    (println (apply + (map abs loc)))
+    (println (apply + (map #(Math/abs %) loc)))
     (let [locdir (exec loc dir (first cmds))]
-      (recur (first locdir) (second locdir) (next cmds)))))
+      (recur (:loc locdir) (:dir locdir) (next cmds)))))
