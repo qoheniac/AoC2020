@@ -19,10 +19,14 @@
   (let [action (first cmd)
         number (second cmd)]
     (case action
-      "F" {:loc (move loc wploc number) :wploc wploc}
-      "R" {:loc loc :wploc (rotate wploc number)}
-      "L" {:loc loc :wploc (rotate wploc (- 360 number))}
-          {:loc loc :wploc (case action
+      "F" {:loc (move loc wploc number)
+           :wploc wploc}
+      "R" {:loc loc
+           :wploc (rotate wploc number)}
+      "L" {:loc loc
+           :wploc (rotate wploc (- 360 number))}
+          {:loc loc
+           :wploc (case action
                  "N" (move wploc [0 1] number)
                  "E" (move wploc [1 0] number)
                  "S" (move wploc [0 -1] number)

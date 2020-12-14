@@ -34,10 +34,14 @@
 (defn exec [loc dir cmd]
   (let [action (:action cmd) number (:number cmd)]
     (case action
-      "F" {:loc (move loc dir number) :dir dir}
-      "R" {:loc loc :dir (rotate dir number)}
-      "L" {:loc loc :dir (rotate dir (- 360 number))}
-          {:loc (move loc action number) :dir dir})))
+      "F" {:loc (move loc dir number)
+           :dir dir}
+      "R" {:loc loc
+           :dir (rotate dir number)}
+      "L" {:loc loc
+           :dir (rotate dir (- 360 number))}
+          {:loc (move loc action number)
+           :dir dir})))
 
 (loop [loc [0 0]
        dir "E"
