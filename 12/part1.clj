@@ -33,13 +33,11 @@
 
 (defn exec [loc dir cmd]
   (let [action (:action cmd) number (:number cmd)]
-    (if (= action "F")
-      {:loc (move loc dir number) :dir dir}
-      (if (= action "R")
-        {:loc loc :dir (rotate dir number)}
-        (if (= action "L")
-          {:loc loc :dir (rotate dir (- 360 number))}
-          {:loc (move loc action number) :dir dir})))))
+    (case action
+      "F" {:loc (move loc dir number) :dir dir}
+      "R" {:loc loc :dir (rotate dir number)}
+      "L" {:loc loc :dir (rotate dir (- 360 number))}
+          {:loc (move loc action number) :dir dir})))
 
 (loop [loc (list 0 0)
        dir "E"
