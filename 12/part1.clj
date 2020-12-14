@@ -8,10 +8,10 @@
 
 (defn move [loc dir vel]
   (case dir
-    "N" (list (first loc) (+ (second loc) vel))
-    "E" (list (+ (first loc) vel) (second loc))
-    "S" (list (first loc) (- (second loc) vel))
-    "W" (list (- (first loc) vel) (second loc))))
+    "N" [(first loc) (+ (second loc) vel)]
+    "E" [(+ (first loc) vel) (second loc)]
+    "S" [(first loc) (- (second loc) vel)]
+    "W" [(- (first loc) vel) (second loc)]))
 
 (defn rotate [dir angle]
   (case angle
@@ -39,7 +39,7 @@
       "L" {:loc loc :dir (rotate dir (- 360 number))}
           {:loc (move loc action number) :dir dir})))
 
-(loop [loc (list 0 0)
+(loop [loc [0 0]
        dir "E"
        cmds (read-data "input")]
   (if (nil? cmds)
