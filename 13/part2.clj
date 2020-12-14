@@ -6,16 +6,29 @@
 ;    t + IDX0*IDX1 == -IDX0 + ID0 * (N0+IDX1) == -IDX1 + ID1 * (N1+IDX0)
 ; 3. Fahre so fort bis Modulo-Gleichung für alle Busse erfüllt.
 (require '[clojure.string :as string :refer [split split-lines]])
-(let [fulldata (sort-by second > (remove nil? (map-indexed #(if (= "x" %2) nil (list %1 (Integer. %2))) (split (second (split-lines (slurp "input"))) #","))))
-      maxts (first (first fulldata))
-      maxid (second (first fulldata))]
-  (loop [data fulldata modtimestemp (- maxid maxts) timestep maxid]
-    (if (nil? (next data))
-      (println modtimestemp)
-      (recur
-        (next data)
-        (loop [timestemp modtimestemp]
-          (if (== 0 (mod (+ timestemp (first (second data))) (second (second data))))
-            timestemp
-            (recur (+ timestemp timestep))))
-        (* timestep (second (second data)))))))
+
+(defn read-second-line [f]
+  (split (second (split-lines (slurp f))) #","))
+
+(defn read-data [f]
+  (remove nil?
+          (map-indexed #(if (= "x" %2)
+                          nil
+                          {:idx %1
+                           :id (read-string %2)})
+                       (read-second-line f))))
+
+(let [allbuses (sort-by :id > (read-data "input"))
+      firstbus (first allbuses)]
+  (loop [buses (next allbuses)
+         modtimestamp (- (:id firstbus) (:idx firstbus))
+         timestep (:id firstbus)]
+    (if (nil? buses)
+      (println modtimestamp)
+      (let [bus (first buses)]
+        (recur (next buses)
+               (loop [timestamp modtimestamp]
+                 (if (zero? (mod (+ timestamp (:idx bus)) (:id bus)))
+                   timestamp
+                   (recur (+ timestamp timestep))))
+               (* timestep (:id bus)))))))
