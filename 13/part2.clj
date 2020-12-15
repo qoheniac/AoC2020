@@ -11,12 +11,11 @@
   (split (second (split-lines (slurp f))) #","))
 
 (defn read-data [f]
-  (remove nil?
-          (map-indexed #(if (= "x" %2)
-                          nil
-                          {:idx %1
-                           :id (read-string %2)})
-                       (read-second-line f))))
+  (->> f
+       read-second-line
+       (map read-string)
+       (map #(hash-map :idx %1 :id %2) (range))
+       (remove #(= (symbol 'x) (:id %)))))
 
 (let [allbuses (sort-by :id > (read-data "input"))
       firstbus (first allbuses)]
