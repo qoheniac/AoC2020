@@ -10,7 +10,7 @@
   (map #(- % (mod (:ets data) %)) (:ids data)))
 
 (defn sort-by-first [x y]
-  (sort-by first (zipmap x y)))
+  (sort-by first (map list x y)))
 
 (let [data (get-data "input")]
   (println (apply * (first (sort-by-first (waits data) (:ids data))))))
