@@ -15,7 +15,7 @@
        read-second-line
        (map read-string)
        (map #(hash-map :idx %1 :id %2) (range))
-       (remove #(= (symbol 'x) (:id %)))))
+       (remove #(symbol? (:id %)))))
 
 (let [allbuses (sort-by :id > (read-data "input"))
       firstbus (first allbuses)]
