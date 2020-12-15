@@ -14,7 +14,7 @@
   (->> f
        read-second-line
        (map read-string)
-       (map #(hash-map :idx %1 :id %2) (range))
+       (map-indexed #(hash-map :idx %1 :id %2))
        (remove #(symbol? (:id %)))))
 
 (let [allbuses (sort-by :id > (read-data "input"))
