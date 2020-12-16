@@ -36,14 +36,9 @@
        (apply-floats (:floatindices mask))))
 
 (defn update-mem [mem mask memline]
-  (let [number (read-string (:val memline))]
-    (loop [addr-list (get-addr-list mask (:cmd memline))
-           newmem mem]
-      (if (nil? addr-list)
-        newmem
-        (recur
-          (next addr-list)
-          (assoc newmem (first addr-list) number))))))
+    (apply assoc mem
+           (interleave (get-addr-list mask (:cmd memline))
+                       (repeat (read-string (:val memline))))))
 
 (defn parse-mask [maskval]
   {:ormask
