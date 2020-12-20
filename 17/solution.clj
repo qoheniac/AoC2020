@@ -4,19 +4,22 @@
 (defn read-data [f]
   (map seq (split-lines (slurp f))))
 
-(defn parse-data [data]
+(defn parse-data [data dim]
   (remove nil?
           (for [[i row] (map-indexed list data)
                 [j cube] (map-indexed list row)]
-            (if (= \# cube) [j (- i) 0] nil))))
+            (if (= \# cube)
+              (concat [j (- i)]
+                      (repeat (- dim 2) 0))
+              nil))))
 
 (defn add [u v]
   (map + u v))
 
-(defn get-neighbors [cube]
+(defn get-neighbors [cube dim]
  (map #(add cube %)
-      (remove #(= % [0 0 0])
-              (selections [-1 0 1] 3))))
+      (remove #(= % (apply vector (repeat dim 0)))
+              (selections [-1 0 1] dim))))
 
 (defn active? [actives neighbor]
   (some #(= % neighbor) actives))
@@ -41,17 +44,21 @@
        (filter #(== 3 (val %)))
        (map first)))
 
-(defn boot [actives]
-  (let [neighborhoods (map get-neighbors actives)]
+(defn boot [actives dim]
+  (let [neighborhoods (map #(get-neighbors % dim) actives)]
     (lazy-seq (cons actives
                     (boot (concat
                             (keep-active actives neighborhoods)
-                            (make-active actives neighborhoods)))))))
+                            (make-active actives neighborhoods))
+                          dim)))))
 
-(-> "input"
-    read-data
-    parse-data
-    boot
-    (nth 6)
-    count
-    println)
+(defn exec [dim]
+  (-> "input"
+      read-data
+      (parse-data dim)
+      (boot dim)
+      (nth 6)
+      count))
+
+(printf "Part 1: %d%n" (exec 3))
+(printf "Part 2: %d%n" (exec 4))
