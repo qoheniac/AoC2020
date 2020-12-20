@@ -41,8 +41,8 @@
 
 (defn valid? [number rules]
   (some #(and
-           (> number (:start %))
-           (< number (:stop %)))
+           (>= number (:start %))
+           (<= number (:stop %)))
         rules))
 
 (defn invalid-numbers [{:keys [rules numbers]}]
