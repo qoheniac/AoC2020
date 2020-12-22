@@ -44,8 +44,7 @@
   (parse-blocks (split (slurp f) #"\n\n")))
 
 (defn in-range? [number {:keys [start stop]}]
-  (and (>= number start)
-       (<= number stop)))
+  (<= start number stop))
 
 (defn number-valid? [number rules]
   (some #(in-range? number %)
